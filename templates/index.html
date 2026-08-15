@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>广西旅游大数据智能分析平台</title>
+    
+    <!-- CSS文件 -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/loading.css">
+    
+    <!-- JS库 -->
+    <script src="https://cdn.bootcss.com/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+</head>
+<body>
+    <!-- 加载动画（由JS动态添加） -->
+    
+    <!-- 头部 -->
+    <div class="header">
+        <h1>广西旅游大数据智能分析平台</h1>
+        <p class="subtitle">Tourism Big Data Multi-Dimensional Analysis & Visualization Platform</p>
+        <p class="info">桂林旅游学院 · 旅游数据学院 · 大赛项目团队 | 数据来源：携程旅行网 | 更新日期：2026年5月8号</p>
+    </div>
+
+    <!-- 数据卡片 -->
+    <div class="stats-container">
+        <div class="stat-card">
+            <div class="title">景区总数</div>
+            <div class="value" id="total-scenic">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="title">覆盖城市</div>
+            <div class="value" id="total-city">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="title">平均评分</div>
+            <div class="value" id="avg-rating">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="title">高分景区占比</div>
+            <div class="value" id="high-rate-percent">0</div><span class="unit">%</span>
+        </div>
+    </div>
+
+    <!-- 图表区域 -->
+    <div class="dashboard">
+        <!-- 图表1：各城市景点数量分布 -->
+        <div class="chart-container">
+            <div class="chart-title">各城市景点数量分布</div>
+            <div id="chart1" class="chart-box"></div>
+        </div>
+
+        <!-- 图表2：景区类型分布 -->
+        <div class="chart-container">
+            <div class="chart-title">景区类型分布</div>
+            <div id="chart2" class="chart-box"></div>
+        </div>
+
+        <!-- 图表3：评分与门票价格关系 -->
+        <div class="chart-container">
+            <div class="chart-title">评分与门票价格关系</div>
+            <div id="chart3" class="chart-box"></div>
+        </div>
+
+        <!-- 图表4：评论数TOP10景点 -->
+        <div class="chart-container">
+            <div class="chart-title">评论数TOP10景点</div>
+            <div id="chart4" class="chart-box"></div>
+        </div>
+
+        <!-- 图表5：各城市平均评分对比 -->
+        <div class="chart-container">
+            <div class="chart-title">各城市平均评分对比</div>
+            <div id="chart5" class="chart-box"></div>
+        </div>
+
+        <!-- 图表6：门票价格区间分布 -->
+        <div class="chart-container">
+            <div class="chart-title">门票价格区间分布</div>
+            <div id="chart6" class="chart-box"></div>
+        </div>
+
+        <!-- 图表7：广西景点分布地图 -->
+        <div class="chart-container">
+            <div class="chart-title">广西景点分布地图</div>
+            <div id="chart7" class="chart-box"></div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <div class="footer">
+        <p>桂林旅游学院 · 旅游数据学院 © 2026 中国大学生计算机设计大赛参赛作品</p>
+        <p>技术支持：Python Flask + ECharts + MySQL | 指导老师：[] | 团队成员：[卢丹，梁絮飞，叶佳宜，张顺杰，盘潇，蒋廖厚林]</p>
+        <p>声明：本平台数据来源于公开渠道，仅用于教学与科研展示。</p>
+    </div>
+
+    <!-- ====== 关键：从Flask模板直接获取数据 ====== -->
+   <script>
+    var rawData = [];
+    
+    try {
+        var dataJsonString = '{{ data_json|safe }}';
+        console.log('收到数据字符串长度:', dataJsonString ? dataJsonString.length : 0);
+        
+        if (dataJsonString && dataJsonString !== '[]' && dataJsonString.trim() !== '') {
+            rawData = JSON.parse(dataJsonString);
+            console.log('✅ 从数据库获取数据条数:', rawData.length);
+            console.log('第一条数据:', rawData[0]);
+        } else {
+            console.warn('数据为空，使用备用数据');
+            rawData = [
+                {"name": "象鼻山景区", "city": "桂林", "rating": 4.5, "review_count": 25000, "ticket_price": 0, "scenic_type": "自然风光"},
+                {"name": "漓江景区", "city": "桂林", "rating": 4.6, "review_count": 18000, "ticket_price": 215, "scenic_type": "自然风光"},
+                {"name": "北海银滩", "city": "北海", "rating": 4.4, "review_count": 4627, "ticket_price": 0, "scenic_type": "自然风光"}
+            ];
+        }
+    } catch (e) {
+        console.error('❌ JSON解析失败:', e);
+        if (typeof dataJsonString !== 'undefined' && dataJsonString && dataJsonString.length > 100) {
+            console.error('数据前100字符:', dataJsonString.substring(0, 100));
+        }
+        rawData = [];
+    }
+    
+    window.rawData = rawData;
+    console.log('全局数据已设置，条数:', window.rawData.length);
+</script>
+
+
+    <!-- JavaScript文件 -->
+    <script src="/static/js/charts.js"></script>
+    <script src="/static/js/main_fixed.js"></script>
+</body>
+</html>
